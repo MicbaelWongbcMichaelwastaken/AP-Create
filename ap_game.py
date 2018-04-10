@@ -7,11 +7,14 @@ clock=pygame.time.Clock()
 done = False
 
 
+RED = (255, 0, 0)
+
 #class Background:
     #screen = pygame.image.load('spacebackground.png').convert()
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
+        super().__init__()
         self.image = pygame.image.load('shipsprite.png')
         self.x = 400
         self.y = 600
@@ -25,12 +28,15 @@ class Player(pygame.sprite.Sprite):
     def draw(self, surface):
         surface.blit(self.image, (self.x, self.y))
     def fire(self):
-        laser = Lasers(self.rect.centerx, self.rect.top)
-        allsprites.add(laser)
+        laser = Lasers(self, self)
+        AllSprites.add(laser)
         lasers.add(laser)
+
+
 
 class Lasers(pygame.sprite.Sprite):
     def __init__(self, x, y):
+        super().__init__()
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((10,20))
         self.image.fill(RED)
@@ -45,8 +51,11 @@ class Lasers(pygame.sprite.Sprite):
             self.kill()
 
 
-
 Player = Player()
+lasers = pygame.sprite.Group()
+AllSprites = pygame.sprite.Group()
+#AllSprites.add(Player)
+
 
 
 while not done:
@@ -55,13 +64,14 @@ while not done:
                         done = True
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        player.fire()
+                        Player.fire()
 
+        AllSprites.update()
+        #hit = pygame.sprite.spritecollide(Player, False)
+        #if hit:
+            #running = False
         screen.fill((0, 0, 0))
-        Player.draw(screen)
         Player.player_keys()
         clock.tick(60)
-
+        AllSprites.draw(screen)
         pygame.display.update()
-
-
